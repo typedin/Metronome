@@ -3,10 +3,12 @@ import { StyleSheet, View } from "react-native";
 
 export default function Container({
   children,
+  isLoaded,
 }: {
   children: JSX.Element | JSX.Element[];
+  isLoaded: boolean;
 }) {
-  return <View style={styles.container}>{children}</View>;
+  return <View style={styles.container}>{isLoaded && children}</View>;
 }
 const styles = StyleSheet.create({
   container: {
