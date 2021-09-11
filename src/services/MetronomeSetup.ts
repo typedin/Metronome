@@ -1,18 +1,15 @@
-import BpmToMS from "../../src/services/BpmToMS";
+import { MetronomeParams, MetronomeSetup } from "./types";
 
-interface MetronomeParams {
-  soundPath: string;
-  mode: "increment" | "traditional";
-}
+import BpmToMS from "../../src/services/BpmToMS";
 
 export default function (params: MetronomeParams, tempo = 60): MetronomeSetup {
   return {
     intervalID: null,
     isPlaying: false,
-    mode: params.mode,
     loopInterval: BpmToMS({ tempo }).toMS(),
+    mode: params.mode,
     sound: null,
-    tempo,
     soundPath: params.soundPath,
+    tempo,
   };
 }
