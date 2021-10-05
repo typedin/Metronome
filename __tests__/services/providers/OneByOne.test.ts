@@ -1,7 +1,7 @@
 import OneByOne from "../../../src/services/providers/OneByOne";
 
-describe("OneByOne", () => {
-  describe("steps", () => {
+describe("OneByOne", function () {
+  describe("steps", function () {
     it("should give the previous step", function () {
       const tempo = 60;
       const sut = OneByOne(tempo);

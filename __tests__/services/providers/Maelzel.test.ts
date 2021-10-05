@@ -1,7 +1,7 @@
 import Maelzel from "../../../src/services/providers/Maelzel";
 
-describe("Maelzel", () => {
-  describe("steps", () => {
+describe("Maelzel", function () {
+  describe("steps", function () {
     it("should give the previous step", function () {
       const tempo = 60;
       const sut = Maelzel(tempo);
