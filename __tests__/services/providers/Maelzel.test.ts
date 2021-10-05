@@ -32,8 +32,8 @@ describe("Maelzel", () => {
   });
 
   it("should find the closest tempo for a given tempo that is not in the predefined tempos", function () {
-    const notAValidTempo = 61;
-    const sut = Maelzel(notAValidTempo);
+    const notValidTempo = 61;
+    const sut = Maelzel(notValidTempo);
 
     expect(sut.getPrevious()).toBe(58);
     expect(sut.getNext()).toBe(63);
