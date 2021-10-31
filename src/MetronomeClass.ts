@@ -1,4 +1,5 @@
-import { IAudioContext, AudioContext } from "standardized-audio-context";
+import { IMetronomeSoundPlayer } from "../src/services/players/MetronomeSoundPlayer"
+import { IAudioContext, } from "standardized-audio-context";
 
 type Note = {
   note: number;
@@ -15,12 +16,19 @@ export default class MetronomeClass {
   nextNoteTime: number;
   isRunning: boolean = false;
   intervalID: null;
+  soundplayer: IMetronomeSoundPlayer
 
-  constructor(tempo: number) {
+  constructor(tempo: number, metronomeSoundPlayer: IMetronomeSoundPlayer) {
     if (!tempo) {
-      throw new TypeError("tempo must be privided as an argument.");
+      throw new TypeError("tempo must be provided as an argument.");
     }
     this.tempo = tempo;
+
+    if(!metronomeSoundPlayer) {
+      throw new TypeError("tempo must be provided as an argument.");
+    }
+    this.soundplayer = metronomeSoundPlayer
+
     // this.audioContext = null;
     this.notesInQueue = []; // notes that have been put into the web audio and may or may not have been played yet {note, time}
     this.currentNote = 0;
@@ -32,28 +40,34 @@ export default class MetronomeClass {
   start() {
     if (this.isRunning) return;
 
-    this.audioContext = new AudioContext();
-
-    this.isRunning = true;
-
     this.currentNote = 0;
+    try {
+      this.soundplayer.play()
+      this.isRunning = true;
+
+    } catch (error) {
+      this.isRunning = false;
+    }
+
+    /* this.audioContext = new AudioContext();
+
+
     this.nextNoteTime = this.audioContext.currentTime + 0.05;
 
-    this.intervalID = setInterval(() => this.scheduler(), this.lookahead);
+    this.intervalID = setInterval(() => this.scheduler(), this.lookahead); */
   }
 
-  stop() {
-    this.isRunning = false;
+    stop() {
+      try {
+        this.soundplayer.stop()
+        this.isRunning = false;
+        clearInterval(this.intervalID);
+      } catch (error) {
 
-    clearInterval(this.intervalID);
-  }
+        this.isRunning = false;
+        clearInterval(this.intervalID);
+      }
 
-  startStop() {
-    if (this.isRunning) {
-      this.stop();
-    } else {
-      this.start();
-    }
   }
 
   nextNote() {

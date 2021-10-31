@@ -1,41 +1,95 @@
-import { AudioContext, registrar } from "standardized-audio-context-mock";
-import { IAudioContext } from "standardized-audio-context";
+import {IMetronomeSoundPlayer} from "../src/services/players/MetronomeSoundPlayer"
 import MetronomeClass from "../src/MetronomeClass";
 
 describe("MetronomeClass", () => {
-  let audioContextMock: IAudioContext;
+  let metronomeSoundPlayerMock: IMetronomeSoundPlayer
 
   beforeEach(() => {
     jest.useFakeTimers();
-    audioContextMock = new AudioContext();
+    metronomeSoundPlayerMock = function(): IMetronomeSoundPlayer{
+      return {
+          play: jest.fn(),
+          stop: jest.fn()
+      }
+    }()
   });
 
   afterEach(() => {
-    registrar.reset(audioContextMock);
     jest.useRealTimers();
   });
 
-  it("cannot be instanciate without a tempo", () => {
-    expect(() => {
-      // @ts-ignore: next-line
-      new MetronomeClass();
-    }).toThrow();
-  });
+  describe('cannot be instanciate', () => {
+    it("without a tempo", () => {
+      expect(() => {
+        // @ts-ignore: next-line
+        new MetronomeClass(null, metronomeSoundPlayerMock);
+      }).toThrow();
+    });
 
-  it("is not running by default", () => {
-    const metronome = new MetronomeClass(60);
+    it("without a MetronomeSoundPlayer", () => {
+      expect(() => {
+        // @ts-ignore: next-line
+        new MetronomeClass(60, undefined);
+      }).toThrow();
+    });
+  })
 
-    expect(metronome.isRunning).toBe(false);
-  });
 
-  it("can be started", () => {
-    const metronome = new MetronomeClass(60);
-    expect(metronome.isRunning).toBe(false);
+  describe('when no errors are thrown', () => {
+    it("can be started", () => {
+      const metronome = new MetronomeClass(60, metronomeSoundPlayerMock);
 
-    metronome.start();
-    expect(metronome.isRunning).toBe(true);
-    expect(
-      registrar.getAudioNodes(audioContextMock, "AudioBufferSourceNode").length
-    ).toEqual(1);
-  });
+      expect(metronome.isRunning).toBe(false);
+
+      metronome.start();
+
+      expect(metronome.isRunning).toBe(true);
+    });
+
+    it("can be stopped", () => {
+      const metronome = new MetronomeClass(60, metronomeSoundPlayerMock);
+
+      metronome.start();
+      expect(metronome.isRunning).toBe(true);
+
+      metronome.stop();
+      expect(metronome.isRunning).toBe(false);
+    });
+  })
+
+  describe('when errors are thrown', () => {
+    it("cannot be started", () => {
+      const badMetronome = {
+        play: jest.fn(() => {
+          throw new Error("Cannot start playing.")
+        }),
+        stop: jest.fn( () => {
+          throw new Error("Cannot stop playing.")
+          }),
+      }
+      const metronome = new MetronomeClass(60, badMetronome);
+
+      expect(metronome.isRunning).toBe(false);
+
+      metronome.start();
+
+      expect(metronome.isRunning).toBe(false);
+    });
+
+    it("can be stopped", () => {
+      const badMetronome = {
+        play: jest.fn(),
+        stop: jest.fn( () => {
+          throw new Error("Cannot stop playing.")
+          }),
+      }
+      const metronome = new MetronomeClass(60, badMetronome);
+
+      metronome.start();
+      expect(metronome.isRunning).toBe(true);
+
+      metronome.stop();
+      expect(metronome.isRunning).toBe(false);
+    });
+  })
 });
