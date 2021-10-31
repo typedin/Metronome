@@ -1,5 +1,5 @@
-import { IMetronomeSoundPlayer } from "../src/services/players/MetronomeSoundPlayer"
-import { IAudioContext, } from "standardized-audio-context";
+import { IMetronomeSoundPlayer } from "../src/services/players/MetronomeSoundPlayer";
+import { IAudioContext } from "standardized-audio-context";
 
 type Note = {
   note: number;
@@ -16,7 +16,7 @@ export default class MetronomeClass {
   nextNoteTime: number;
   isRunning: boolean = false;
   intervalID: null;
-  soundplayer: IMetronomeSoundPlayer
+  soundplayer: IMetronomeSoundPlayer;
 
   constructor(tempo: number, metronomeSoundPlayer: IMetronomeSoundPlayer) {
     if (!tempo) {
@@ -24,10 +24,12 @@ export default class MetronomeClass {
     }
     this.tempo = tempo;
 
-    if(!metronomeSoundPlayer) {
-      throw new TypeError("tempo must be provided as an argument.");
+    if (!metronomeSoundPlayer) {
+      throw new TypeError(
+        "metronomeSoundPlayer must be provided as an argument."
+      );
     }
-    this.soundplayer = metronomeSoundPlayer
+    this.soundplayer = metronomeSoundPlayer;
 
     // this.audioContext = null;
     this.notesInQueue = []; // notes that have been put into the web audio and may or may not have been played yet {note, time}
@@ -42,9 +44,8 @@ export default class MetronomeClass {
 
     this.currentNote = 0;
     try {
-      this.soundplayer.play()
+      this.soundplayer.play();
       this.isRunning = true;
-
     } catch (error) {
       this.isRunning = false;
     }
@@ -57,17 +58,15 @@ export default class MetronomeClass {
     this.intervalID = setInterval(() => this.scheduler(), this.lookahead); */
   }
 
-    stop() {
-      try {
-        this.soundplayer.stop()
-        this.isRunning = false;
-        clearInterval(this.intervalID);
-      } catch (error) {
-
-        this.isRunning = false;
-        clearInterval(this.intervalID);
-      }
-
+  stop() {
+    try {
+      this.soundplayer.stop();
+      this.isRunning = false;
+      clearInterval(this.intervalID);
+    } catch (error) {
+      this.isRunning = false;
+      clearInterval(this.intervalID);
+    }
   }
 
   nextNote() {
