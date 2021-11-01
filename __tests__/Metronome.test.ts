@@ -1,49 +1,98 @@
-import Metronome from "../src/Metronome";
-import { AudioContext, registrar } from "standardized-audio-context-mock";
-import { IAudioContext } from "standardized-audio-context";
-import { INotePlayer } from "../src/NotePlayer";
+import createMetronome from "../src/Metronome";
+import { IMetronomeSoundPlayer } from "../src/services/players/MetronomeSoundPlayer";
 
 describe("Metronome", () => {
-  let audioContextMock: IAudioContext;
-  let NotePlayer: INotePlayer;
+  const playMock = jest.fn();
+  const stopMock = jest.fn();
+  function PlayerThatCannotPlay(): IMetronomeSoundPlayer {
+    return {
+      play: jest.fn(() => {
+        throw new Error("Cannot start playing.");
+      }),
+      stop: jest.fn(() => {
+        throw new Error("Cannot stop playing.");
+      }),
+    };
+  }
+  function PlayerThatCannotStop(): IMetronomeSoundPlayer {
+    return {
+      play: jest.fn(),
+      stop: jest.fn(() => {
+        throw new Error("Cannot stop playing.");
+      }),
+    };
+  }
+  function metronomeSoundPlayerMock(): IMetronomeSoundPlayer {
+    return {
+      play: playMock,
+      stop: stopMock,
+    };
+  }
 
   beforeEach(() => {
-    NotePlayer = jest.fn(() => {});
-    jest.useFakeTimers();
-    audioContextMock = new AudioContext();
+    playMock.mockClear();
+    stopMock.mockClear();
   });
 
-  afterEach(() => {
-    registrar.reset(audioContextMock);
-    jest.useRealTimers();
+  describe("cannot be instanciate", () => {
+    it("without a tempo", () => {
+      expect(() => {
+        // @ts-ignore: next-line
+        createMetronome(null, metronomeSoundPlayerMock);
+      }).toThrow("tempo must be provided as an argument.");
+    });
+
+    it("without a MetronomeSoundPlayer", () => {
+      expect(() => {
+        // @ts-ignore: next-line
+        createMetronome(60, undefined);
+      }).toThrow("metronomeSoundPlayer must be provided as an argument.");
+    });
   });
 
-  it("can be instanciated and is not running by default", function () {
-    const metronome = Metronome(60, audioContextMock, NotePlayer);
+  describe("when no errors are thrown", () => {
+    it("can be started", () => {
+      const metronome = createMetronome(60, metronomeSoundPlayerMock);
 
-    expect(metronome.currentTempo).toEqual(60);
-    expect(metronome.isRunning).toBe(false);
+      expect(metronome.isRunning).toBe(false);
+
+      metronome.start();
+
+      expect(metronome.isRunning).toBe(true);
+      expect(playMock).toBeCalledTimes(1);
+    });
+
+    it("can be stopped", () => {
+      const metronome = createMetronome(60, metronomeSoundPlayerMock);
+      metronome.start();
+      expect(metronome.isRunning).toBe(true);
+
+      metronome.stop();
+
+      expect(metronome.isRunning).toBe(false);
+      expect(stopMock).toBeCalledTimes(1);
+    });
   });
 
-  it("can have its tempo set", function () {
-    const metronome = Metronome(42, audioContextMock, NotePlayer);
+  describe("when errors are thrown", () => {
+    it("should not be running when an error occures when start throws", () => {
+      const metronome = createMetronome(60, PlayerThatCannotPlay);
 
-    expect(metronome.currentTempo).toEqual(42);
-  });
+      expect(metronome.isRunning).toBe(false);
 
-  it("can be started", function () {
-    const metronome = Metronome(60, audioContextMock, NotePlayer);
+      metronome.start();
 
-    expect(metronome.isRunning).toBe(false);
-    expect(NotePlayer).not.toHaveBeenCalled();
+      expect(metronome.isRunning).toBe(false);
+    });
 
-    metronome.start();
+    it("should not be running when an error occures when stop throws", () => {
+      const metronome = createMetronome(60, PlayerThatCannotStop);
 
-    expect(metronome.isRunning).toBe(true);
-    expect(NotePlayer).toHaveBeenLastCalledWith({
-      time: expect.any(Number),
-      beatNumber: expect.any(Number),
-      audioContext: audioContextMock,
+      metronome.start();
+      expect(metronome.isRunning).toBe(true);
+
+      metronome.stop();
+      expect(metronome.isRunning).toBe(false);
     });
   });
 });
