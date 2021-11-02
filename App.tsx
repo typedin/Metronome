@@ -1,17 +1,55 @@
 import React, { useState } from "react";
+import createMetronome from "./src/Metronome";
 import { Pressable, Text } from "react-native";
 import Container from "./src/layouts/Container";
 import tw from "tailwind-react-native-classnames";
-import { webPlayer } from "./src/services/players/MetronomeSoundPlayer";
-import createMetronome from "./src/Metronome";
+import { webPlayer } from "./src/services/MetronomeSoundPlayer";
 
 const DEFAULT_TEMPO = 60;
 export default function App() {
-  const [metronome] = useState(createMetronome(DEFAULT_TEMPO, webPlayer));
+  const [tempo, setTempo] = useState(DEFAULT_TEMPO);
+  const [metronome] = useState(createMetronome(tempo, webPlayer));
   const [isRunning, setIsRunning] = useState(false);
 
   return (
     <Container>
+      <div style={tw`flex flex-row items-center justify-between`}>
+        <Pressable>
+          <svg
+            style={tw`w-6 h-6`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M20 12H4"
+            ></path>
+          </svg>
+        </Pressable>
+        <div style={tw`px-8 border border-gray-900`}>
+          <Text>{tempo}</Text>
+        </div>
+        <Pressable>
+          <svg
+            style={tw`w-6 h-6`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            ></path>
+          </svg>
+        </Pressable>
+      </div>
       <Pressable
         onPress={
           isRunning

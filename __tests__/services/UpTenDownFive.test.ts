@@ -1,4 +1,4 @@
-import UpTenDownFive from "../../../src/services/providers/UpTenDownFive";
+import UpTenDownFive from "../../src/services/UpTenDownFive";
 
 describe("UpTenDownFive", () => {
   describe("steps", () => {

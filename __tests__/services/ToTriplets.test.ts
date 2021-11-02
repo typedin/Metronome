@@ -1,4 +1,4 @@
-import BinaryTernarySwitcher from "../../../src/services/providers/BinaryTernarySwitcher";
+import BinaryTernarySwitcher from "../../src/services/BinaryTernarySwitcher";
 
 describe("BinaryTernarySwitcher", () => {
   describe("toTriplets", () => {

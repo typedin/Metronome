@@ -1,4 +1,4 @@
-import Maelzel from "../../../src/services/providers/Maelzel";
+import Maelzel from "../../src/services/Maelzel";
 
 describe("Maelzel", function () {
   describe("steps", function () {

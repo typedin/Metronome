@@ -1,4 +1,4 @@
-import OneByOne from "../../../src/services/providers/OneByOne";
+import OneByOne from "../../src/services/OneByOne";
 
 describe("OneByOne", function () {
   describe("steps", function () {
