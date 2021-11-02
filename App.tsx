@@ -5,19 +5,27 @@ import Container from "./src/layouts/Container";
 import tw from "tailwind-react-native-classnames";
 import { webPlayer } from "./src/services/MetronomeSoundPlayer";
 import OneByOne from "./src/services/OneByOne";
+import Maelzel from "./src/services/Maelzel";
 
 const DEFAULT_TEMPO = 60;
 export default function App() {
   let [tempo, setTempo] = useState(DEFAULT_TEMPO);
-  const [metronome] = useState(createMetronome(tempo, webPlayer));
+  const [metronome, setMetronome] = useState(
+    createMetronome(tempo, webPlayer, Maelzel)
+  );
   const [isRunning, setIsRunning] = useState(false);
+
+  const changeTempo = function (aChoice: "increaseTempo" | "decreaseTempo") {
+    metronome.stop();
+    const newTempo = metronome[aChoice]();
+    setTempo(newTempo);
+    setMetronome(createMetronome(newTempo, webPlayer, Maelzel));
+  };
 
   return (
     <Container>
       <div style={tw`flex flex-row items-center justify-between`}>
-        <Pressable
-          onPress={() => setTempo(OneByOne(tempo).getPrevious() || tempo)}
-        >
+        <Pressable onPress={() => changeTempo("decreaseTempo")}>
           <svg
             style={tw`w-6 h-6`}
             fill="none"
@@ -36,7 +44,7 @@ export default function App() {
         <div style={tw`px-8 border border-gray-900`}>
           <Text>{tempo}</Text>
         </div>
-        <Pressable onPress={() => setTempo(OneByOne(tempo).getNext() || tempo)}>
+        <Pressable onPress={() => changeTempo("increaseTempo")}>
           <svg
             style={tw`w-6 h-6`}
             fill="none"
