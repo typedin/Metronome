@@ -4,17 +4,20 @@ import { Pressable, Text } from "react-native";
 import Container from "./src/layouts/Container";
 import tw from "tailwind-react-native-classnames";
 import { webPlayer } from "./src/services/MetronomeSoundPlayer";
+import OneByOne from "./src/services/OneByOne";
 
 const DEFAULT_TEMPO = 60;
 export default function App() {
-  const [tempo, setTempo] = useState(DEFAULT_TEMPO);
+  let [tempo, setTempo] = useState(DEFAULT_TEMPO);
   const [metronome] = useState(createMetronome(tempo, webPlayer));
   const [isRunning, setIsRunning] = useState(false);
 
   return (
     <Container>
       <div style={tw`flex flex-row items-center justify-between`}>
-        <Pressable>
+        <Pressable
+          onPress={() => setTempo(OneByOne(tempo).getPrevious() || tempo)}
+        >
           <svg
             style={tw`w-6 h-6`}
             fill="none"
@@ -33,7 +36,7 @@ export default function App() {
         <div style={tw`px-8 border border-gray-900`}>
           <Text>{tempo}</Text>
         </div>
-        <Pressable>
+        <Pressable onPress={() => setTempo(OneByOne(tempo).getNext() || tempo)}>
           <svg
             style={tw`w-6 h-6`}
             fill="none"

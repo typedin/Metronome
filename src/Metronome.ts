@@ -1,13 +1,18 @@
+import { IMetronomeStepper } from "./services/types";
+
 interface IMetronome {
-  isRunning: boolean;
-  start: Function;
-  stop: Function;
   tempo: number;
+  isRunning: boolean;
+  start: () => void;
+  stop: () => void;
+  decreaseTempo: () => number;
+  increaseTempo: () => number;
 }
 
 export default function createMetronome(
   tempo: number,
-  soundPlayer: Function
+  soundPlayer: Function,
+  stepper: (tempo: number) => IMetronomeStepper
 ): IMetronome {
   if (!tempo) {
     throw new TypeError("tempo must be provided as an argument.");
@@ -19,7 +24,12 @@ export default function createMetronome(
     );
   }
 
+  if (!stepper) {
+    throw new TypeError("stepper must be provided as an argument.");
+  }
+
   const localSoundPlayer = soundPlayer(tempo);
+  const localStepper = stepper(tempo);
 
   return {
     tempo,
@@ -39,6 +49,12 @@ export default function createMetronome(
       } catch (error) {
         this.isRunning = false;
       }
+    },
+    decreaseTempo() {
+      return localStepper.getPrevious() || tempo;
+    },
+    increaseTempo() {
+      return localStepper.getNext() || tempo;
     },
   };
 }

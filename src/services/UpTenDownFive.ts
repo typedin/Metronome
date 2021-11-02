@@ -1,4 +1,4 @@
-import { IMetronomeStepper } from "../types";
+import { IMetronomeStepper } from "./types";
 
 export default (tempo: number): IMetronomeStepper => {
   const getPrevious = () => undefined;

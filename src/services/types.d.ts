@@ -2,4 +2,9 @@ declare interface IValues {
   (): number[];
 }
 
-export { IValues };
+declare interface IMetronomeStepper {
+  getNext: () => number | undefined;
+  getPrevious: () => number | undefined;
+}
+
+export { IValues, IMetronomeStepper };

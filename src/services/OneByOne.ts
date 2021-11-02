@@ -1,4 +1,4 @@
-import { IMetronomeStepper } from "../types";
+import { IMetronomeStepper } from "./types";
 
 const LOWER_LIMIT = 20;
 const UPPER_LIMIT = 280;
