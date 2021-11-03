@@ -1,5 +1,5 @@
 import createMetronome from "../src/Metronome";
-import { IMetronomeSoundPlayer } from "../src/services/players/MetronomeSoundPlayer";
+import { IMetronomeSoundPlayer } from "../src/services/MetronomeSoundPlayer";
 
 describe("Metronome", () => {
   const playMock = jest.fn();
