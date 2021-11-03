@@ -4,6 +4,7 @@ import { IMetronomeSoundPlayer } from "../src/services/MetronomeSoundPlayer";
 describe("Metronome", () => {
   const playMock = jest.fn();
   const stopMock = jest.fn();
+
   function PlayerThatCannotPlay(): IMetronomeSoundPlayer {
     return {
       play: jest.fn(() => {
@@ -14,6 +15,7 @@ describe("Metronome", () => {
       }),
     };
   }
+
   function PlayerThatCannotStop(): IMetronomeSoundPlayer {
     return {
       play: jest.fn(),
@@ -22,6 +24,7 @@ describe("Metronome", () => {
       }),
     };
   }
+
   function metronomeSoundPlayerMock(): IMetronomeSoundPlayer {
     return {
       play: playMock,
