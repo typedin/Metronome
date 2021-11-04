@@ -23,6 +23,7 @@ describe("Metronome", () => {
       }),
     };
   }
+
   function PlayerThatCannotStop(): IMetronomeSoundPlayer {
     return {
       play: jest.fn(),
