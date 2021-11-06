@@ -1,40 +1,36 @@
-import React, { useState } from "react";
-import Maelzel from "../services/Maelzel";
-import { Text, Pressable, LogBox } from "react-native";
+import React from "react";
+import { Text, Pressable } from "react-native";
 import tw from "tailwind-react-native-classnames";
-import OneByOne from "../services/OneByOne";
 import { previousStepperIndex, nextStepperIndex } from "../helpers";
+import { NamedStepper } from "../services/types";
 
-function SelectStepper({ changeStepper }) {
-  const steppers = [
-    {
-      name: "Maelzel",
-      function: Maelzel,
-    },
-    {
-      name: "One by One",
-      function: OneByOne,
-    },
-  ];
-  let [stepperIndex, setStepperIndex] = useState(0);
-  const [stepper, setStepper] = useState(steppers[0]);
-
+function SelectStepper({
+  onNewIndex,
+  steppers,
+  stepperIndex,
+  currentStepper,
+}: {
+  onNewIndex: Function;
+  steppers: NamedStepper[];
+  stepperIndex: number;
+  currentStepper: NamedStepper;
+}) {
   function setPreviousStepper() {
     const newIndex = previousStepperIndex({
       index: stepperIndex,
       arrayLength: steppers.length,
     });
-    setStepperIndex(newIndex);
-    setStepper(steppers[newIndex]);
+    onNewIndex(newIndex);
   }
+
   function setNextStepper() {
     const newIndex = nextStepperIndex({
       index: stepperIndex,
       arrayLength: steppers.length,
     });
-    setStepperIndex(newIndex);
-    setStepper(steppers[newIndex]);
+    onNewIndex(newIndex);
   }
+
   return (
     <div style={tw`flex flex-row items-center justify-between`}>
       <Pressable onPress={() => setPreviousStepper()}>
@@ -53,8 +49,8 @@ function SelectStepper({ changeStepper }) {
           />
         </svg>
       </Pressable>
-      <div className={tw`mx-6`}>
-        <Text>{stepper.name}</Text>
+      <div style={tw`mx-6`}>
+        <Text>{currentStepper.name}</Text>
       </div>
       <Pressable onPress={() => setNextStepper()}>
         <svg

@@ -6,39 +6,64 @@ import Maelzel from "./src/services/Maelzel";
 import Play from "./src/components/Play";
 import SelectTempo from "./src/components/SelectTempo";
 import SelectStepper from "./src/components/SelectStepper";
-import { IMetronomeStepper } from "./src/services/types";
+import { NamedStepper } from "./src/services/types";
+import OneByOne from "./src/services/OneByOne";
+import UpTenDownFive from "./src/services/UpTenDownFive";
 
 const DEFAULT_TEMPO = 60;
-const DEFAULT_STEPPER = Maelzel;
+const steppers = [
+  {
+    name: "Maelzel",
+    callable: Maelzel,
+  },
+  {
+    name: "One by One",
+    callable: OneByOne,
+  },
+  {
+    name: "Up ten down five",
+    callable: UpTenDownFive,
+  },
+];
+
 export default function App() {
-  let [tempo, setTempo] = useState(DEFAULT_TEMPO);
-  let stepper = DEFAULT_STEPPER;
+  const [tempo, setTempo] = useState(DEFAULT_TEMPO);
+  const [stepper, setStepper] = useState(steppers[0]);
+  const [isRunning, setIsRunning] = useState(false);
+  const [stepperIndex, setStepperIndex] = useState(0);
+
   const [metronome, setMetronome] = useState(
-    createMetronome(tempo, webPlayer, stepper)
+    createMetronome(tempo, webPlayer, stepper.callable)
   );
 
-  const [isRunning, setIsRunning] = useState(false);
-
-  const changeStepper = function (
-    aStepper: (tempo: number) => IMetronomeStepper
-  ) {
-    stepper = aStepper;
-  };
-  const changeTempo = function (aChoice: "increaseTempo" | "decreaseTempo") {
+  function changeTempo(aChoice: "increaseTempo" | "decreaseTempo") {
     metronome.stop();
     const newTempo = metronome[aChoice]();
     setTempo(newTempo);
-    setMetronome(createMetronome(newTempo, webPlayer, Maelzel));
-  };
+    setMetronome(createMetronome(newTempo, webPlayer, stepper.callable));
+  }
 
-  const startStop = function (): void {
+  function startStop(): void {
     metronome[isRunning ? "stop" : "start"]();
     setIsRunning(metronome.isRunning);
-  };
+  }
+
+  function onNewIndex(newIndex: number) {
+    setStepperIndex(newIndex);
+    setStepper(steppers[newIndex]);
+    setMetronome(
+      createMetronome(tempo, webPlayer, steppers[newIndex].callable)
+    );
+  }
 
   return (
     <Container>
-      <SelectStepper changeStepper={changeStepper} />
+      <SelectStepper
+        steppers={steppers}
+        onNewIndex={onNewIndex}
+        currentStepper={stepper}
+        stepperIndex={stepperIndex}
+      />
       <SelectTempo changeTempo={changeTempo} tempo={tempo} />
       <Play startStop={startStop} isRunning={metronome.isRunning} />
     </Container>

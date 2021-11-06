@@ -7,4 +7,9 @@ declare interface IMetronomeStepper {
   getPrevious: () => number | undefined;
 }
 
-export { IValues, IMetronomeStepper };
+type NamedStepper = {
+  name: string;
+  callable: (tempo: number) => IMetronomeStepper;
+};
+
+export { IValues, IMetronomeStepper, NamedStepper };
