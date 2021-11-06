@@ -6,7 +6,8 @@ describe("UpTenDownFive", () => {
       const tempo = 60;
       const sut = UpTenDownFive(tempo);
 
-      expect(sut.getPrevious()).toBe(undefined);
+      expect(sut.getPrevious()).toBe(55);
+      expect(sut.getPrevious()).toBe(50);
     });
 
     it("should give the next step", function () {
@@ -14,9 +15,7 @@ describe("UpTenDownFive", () => {
       const sut = UpTenDownFive(tempo);
 
       expect(sut.getNext()).toBe(70);
-      expect(sut.getNext()).toBe(65);
-      expect(sut.getNext()).toBe(75);
-      expect(sut.getNext()).toBe(70);
+      expect(sut.getNext()).toBe(80);
     });
   });
 });

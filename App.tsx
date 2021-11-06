@@ -6,7 +6,6 @@ import Maelzel from "./src/services/Maelzel";
 import Play from "./src/components/Play";
 import SelectTempo from "./src/components/SelectTempo";
 import SelectStepper from "./src/components/SelectStepper";
-import { NamedStepper } from "./src/services/types";
 import OneByOne from "./src/services/OneByOne";
 import UpTenDownFive from "./src/services/UpTenDownFive";
 
@@ -40,7 +39,7 @@ export default function App() {
     metronome.stop();
     const newTempo = metronome[aChoice]();
     setTempo(newTempo);
-    setMetronome(createMetronome(newTempo, webPlayer, stepper.callable));
+    setMetronome(() => createMetronome(newTempo, webPlayer, stepper.callable));
   }
 
   function startStop(): void {

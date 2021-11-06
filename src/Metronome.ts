@@ -35,8 +35,8 @@ export default function createMetronome(
     tempo,
     isRunning: false,
     start() {
-      try {
         localSoundPlayer.play();
+        try {
         this.isRunning = true;
       } catch (error) {
         this.isRunning = false;

@@ -1,7 +1,3 @@
-declare interface IValues {
-  (): number[];
-}
-
 declare interface IMetronomeStepper {
   getNext: () => number | undefined;
   getPrevious: () => number | undefined;
@@ -12,4 +8,4 @@ type NamedStepper = {
   callable: (tempo: number) => IMetronomeStepper;
 };
 
-export { IValues, IMetronomeStepper, NamedStepper };
+export { IMetronomeStepper, NamedStepper };
